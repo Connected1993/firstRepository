@@ -1,0 +1,93 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+.dragZone {
+    border: 2px solid black;
+    height: 150px;
+    min-width: 200px;
+    width: 50vw;
+    margin: 0 auto;
+    position: relative;
+    transition: all 300ms;
+    -webkit-transition: all 300ms;
+    -moz-transition: all 300ms;
+    -ms-transition: all 300ms;
+    -o-transition: all 300ms;
+}
+
+.dragZone:hover {
+    cursor: pointer;
+    border: 2px solid rgb(131, 131, 225);
+}
+
+
+.dragZone .fa-cloud-arrow-up {
+    pointer-events: none;
+    transition: all 300ms;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    font-size: 68px;
+    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+    -moz-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    -o-transform: translate(-50%,-50%);
+    -webkit-transition: all 300m;
+    -moz-transition: all 300m;
+    -ms-transition: all 300m;
+    -o-transition: all 300m;
+}
+
+
+.dragZone:hover i {
+    /* color: rgb(131, 131, 225); */
+} 
+
+.dragZone__preview {
+    padding-top: 15px;
+    max-height: 200px;
+    overflow: auto;
+    margin: 0 -2px;
+    display: flex;
+    flex-wrap: wrap;
+    gap:5px;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(105%);
+    -webkit-transform: translateY(105%);
+    -moz-transform: translateY(105%);
+    -ms-transform: translateY(105%);
+    -o-transform: translateY(105%);   
+}
+
+.dragZone__img {
+    position: relative;
+}
+
+.dragZone__img img {
+    width: 100px;
+}
+
+.dragZone__preview i {
+    font-size: 30px;
+}
+
+.fa-circle-xmark {
+    z-index: 999;
+    position: absolute;
+    right: -10px;
+    top:-5px;
+    border: 1px solid white;
+}
+
+.fa-circle-xmark:hover {
+    color: rgb(168, 12, 12);
+}

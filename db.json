@@ -1,0 +1,33 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "source": "https://basket-10.wb.ru/vol1463/part146355/146355649/images/big/1.jpg",
+      "price": 10500,
+      "name": "Gigabyte",
+      "description": "Ноутбук Gigabyte G5 GE [GE-51RU263SD]/15.6 FHD/RTX 3050"
+    },
+    {
+      "id": 2,
+      "price": "99999999",
+      "name": "Apple MacBook Pro 16/M2 Max/32/1",
+      "description": "(Space Grey)",
+      "source": "https://basket-12.wb.ru/vol1671/part167148/167148732/images/big/1.jpg",
+      "action": "update"
+    },
+    {
+      "id": 3,
+      "source": "https://basket-05.wb.ru/vol821/part82120/82120311/images/big/1.jpg",
+      "price": 57300,
+      "name": "Компьютер Игровой Компьютер i7",
+      "description": "RX-580-8G/16G/SSD-512G/Монитор 27"
+    },
+    {
+      "id": 4,
+      "source": "https://basket-08.wb.ru/vol1144/part114465/114465982/images/big/1.jpg",
+      "price": 87523,
+      "name": "RobotComp",
+      "description": "Мощный игровой компьютер Зевс 2.0 V3"
+    }
+  ]
+}

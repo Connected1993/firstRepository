@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/default.css">
+    <link rel="stylesheet" href="/css/basket.css">
+    
+</head>
+
+<body>
+    <style>
+        .update,
+        .delete {
+            width: 200px;
+            margin: auto;
+        }
+
+        .update input, 
+        .delete input {
+            display: block;
+            width: 100%;
+            padding: 3px;
+            margin-bottom: 5px;
+            outline: none;
+        }
+    </style>
+
+    <div class="basket">
+        <div class="basket__header">
+            <h2>Корзина</h2>
+            <input type="checkbox">
+        </div>
+        <div class="basket__item d-none">
+            <div class="item__header">
+                <img src="https://basket-10.wb.ru/vol1463/part146355/146355649/images/big/1.jpg" alt="">
+
+                <!-- <div class="item__panel">
+                        <div class="total">
+                            <div class="btn btn__panel">-</div>
+                            <input type="number" value="1">
+                            <div class="btn btn__panel">+</div>
+                        </div>
+                        <div class="price">9999999</div>
+                    </div> -->
+            </div>
+            <div class="item__body">
+                <div class="item__name"></div>
+                <details open>
+                    <summary>Подробнее</summary>
+                    <div class="item__description">
+                        Gigabyte
+                        Ноутбук Gigabyte G5 GE [GE-51RU263SD]/15.6" FHD/RTX 3050
+                    </div>
+                </details>
+            </div>
+            <div class="item__panel">
+                <div class="item__total">
+                    <div class="btn btn__panel btn__minus">-</div>
+                    <input type="number" value="1">
+                    <div class="btn btn__panel btn__plus">+</div>
+                    <div class="item__price">9999999</div>
+                    <i class="fa-solid fa-trash-can fa-lg"></i>
+                </div>
+            </div>
+        </div>
+        <div class="basket__total">
+            <h3>Итого:</h3>
+            <span>43534653</span>
+        </div>
+    </div>
+
+    <h2 style="text-align: center;">Обновить данные по товару в базе</h2>
+    <form id="update" class="update">
+        <input type="number" placeholder="id товара" name="id" required>
+        <input type="number" placeholder="цена" name="price">
+        <input type="text" placeholder="наименование" name="name">
+        <input type="text" placeholder="описание" name="description">
+        <input type="url" placeholder="url" name="source">
+        <input type="submit" value="Обновить">
+    </form>
+
+    <h2 style="text-align: center;">Удалить товар</h2>
+    <form id="delete" class="delete">
+        <input type="number" placeholder="id товара" name="id" required>
+        <input type="submit" value="Обновить">
+    </form>
+
+    <script src="/js/basket.js" defer></script>
+    <script>
+        const DATABASE = 'http://localhost:9000';
+        const STORAGE = 'basket';
+        let HISTORY = null;
+
+        // кнопка обновить данные в бд 
+        // обновляем по id товара
+        const btnUpdate = document.querySelector('.update [type=submit]')?.addEventListener('click', Event => {
+            // останавливаем стандартное событие кнопки
+            Event.preventDefault();
+            console.log('Update')
+            let id = update.querySelector('input[name=id]').value;
+            
+            // если указали id
+            if (id)
+            {
+                let data = new FormData(update);
+                let params = {};
+                data.append('action','update');
+                // перебераем обьект с данными из формы
+                data.forEach((v,k)=>{
+                    params[k] = v;
+                })
+
+                // POST - создает
+                // GET - получает
+                // PUT - создаёт новый ресурс или заменяет представление целевого ресурса, данными представленными в теле запроса
+                // PATCH - частично изменяет ресурс.
+                // DELETE - удаляет
+
+                fetch(DATABASE+`/products/${id}`,{
+                    method:'PATCH',
+                    headers:{
+                        'Content-Type':'application/json'
+                    },
+                    body: JSON.stringify(params)
+                })
+            }
+        })
+
+        //Обработчик событий
+        document.querySelector('.basket').addEventListener('click',Event=>{
+            // элемент по которому нажали
+            let element = Event.target;
+            // находим родительский блок
+            let parent = element.closest('.item__total');
+            // получили сам инпут
+            let input  = parent?.querySelector('input');
+
+
+            if (element.classList.contains('fa-trash-can'))
+            {
+                let id = element.closest('.basket__item').getAttribute('data-id');
+
+                // получили все товары в хранилище
+                storage = JSON.parse(localStorage.getItem(STORAGE));
+
+                // удалили товар из объекта
+                delete storage[id];
+
+                // сохраняем новые данные
+                localStorage.setItem(STORAGE,JSON.stringify(storage));
+
+                // удалить визуально
+                element.closest('.basket__item').remove();
+            }
+
+
+            if (element.classList.contains('btn__plus'))
+            {
+                input.value++;
+            }
+            if (element.classList.contains('btn__minus'))
+            {
+                if (input.value > 1 )
+                {
+                    input.value--;
+                }
+            }
+
+            renderTotal();
+
+        })
+
+
+        document.querySelector('.basket').addEventListener('change',()=>{
+            console.log('что-то изменилось');
+        })
+
+        // при загрузки страницы
+        window.addEventListener('load', () => {
+
+            let storage = JSON.parse(localStorage.getItem(STORAGE));
+
+            // если ничего нет тогда выходими с функции
+            if (!storage) return false;
+
+            // преобразуем объект в массив и перезаписываем саму себя
+            storage = Object.keys(storage);
+
+            // сформировали строку айдишников товаров
+            let ids = 'id=' + storage.join('&id=');
+
+            getProduct(ids);
+        })
+
+        // устанавливаем обработчик на окно браузера
+        // которые отслеживает изменения в хранилище
+        window.addEventListener('storage', () => {
+            // получаем данные
+            let storage = JSON.parse(localStorage.getItem(STORAGE));
+            if (!storage) return false;
+
+            // {"1":1,"2":1} - new
+            // {"1":1,"2":1,"3":1} - old
+
+            // удаление товара
+            if (HISTORY.length > localStorage.getItem(STORAGE).length)
+            {
+                deleteProduct(storage);
+                // остановить работу функции по событию storage
+                return false;
+            }
+            else
+            {
+                // объект в массив
+                storage = Object.keys(storage);
+                // перебор
+                // получаем id каждого товара
+                storage.forEach(id => {
+                    // поиск на страничке товара с id ?
+                    let elem = document.querySelector(`.basket__item[data-id='${id}']`);
+                    // если не найден!
+                    if (!elem) {
+                        // получаем данные по товару с БД
+                        getProduct('id=' + id);
+                        // сохраняем в переменную строку из хранилища
+                        HISTORY = localStorage.getItem(STORAGE);
+                    }
+                })
+            }
+
+        })
+
+        // удаление товара
+        function deleteProduct(storage)
+        {
+            // строку в объект
+            let data = JSON.parse(HISTORY);
+            console.log('старые данные ', data);
+            console.log('новые данные ', storage);
+            // перебераем новые данные
+            for (let id in data) {
+
+                // и смотрим существование ключа в старом объекте
+                if (!storage[id]) {
+                    let elem = document.querySelector(`.basket__item[data-id='${id}']`);
+
+                    if (elem) {
+                        // перезаписили истрою
+                        // которую получили из хранилища
+                        HISTORY = localStorage.getItem(STORAGE);
+                        // удалили товар
+                        elem.remove();
+                    }
+                }
+            }
+            renderTotal();
+        }
+
+        // получение данных по товару с БД
+        function getProduct(ids) {
+            // вытянули данные из БД
+            const getProducts = fetch(`${DATABASE}/products?${ids}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+
+            getProducts
+                .then(response => response.json())
+                // отрисовываем товары
+                .then(json => renderProduct(json))
+                .catch(err => console.log('Нет подключения к серверу!'));
+        }
+
+        // подсчет итого
+        function renderTotal()
+        {
+            let total = 0;
+
+            document.querySelectorAll('.basket__item[data-id]')
+            .forEach(product=>{
+                let count = parseInt(product.querySelector('.item__total input').value);
+                let price = parseInt(product.querySelector('.item__price').textContent);
+                total += count*price;
+            })
+
+            document.querySelector('.basket__total span').textContent = total;
+        }
+
+ 
+    </script>
+    
+    <script defer src="https://kit.fontawesome.com/f931fab46d.js" crossorigin="anonymous"></script>
+</body>
+
+</html>

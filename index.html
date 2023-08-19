@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script defer src="https://kit.fontawesome.com/f931fab46d.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="css/product.css">
+
+    <script defer src="js/data.js"></script>
+
+</head>
+<body>
+    <header>
+
+    </header>
+    <main>
+        
+        <div class="products">
+            <div class="products__item d-none">
+                <div class="products__image">
+                    <img src="https://basket-10.wb.ru/vol1463/part146355/146355649/images/big/1.jpg" alt="">
+                </div>
+                <div class="products__price">99999</div>
+                <div class="products__name">Gigabyte
+                    Ноутбук Gigabyte G5 GE [GE-51RU263SD]/15.6" FHD/RTX 3050</div>
+                <div class="products__stars">
+                    <i class="fa-regular fa-star"></i>
+                    <div class="stars">99 Оценок</div>
+                </div>
+                <div class="products__buy">
+                    <div class="btn"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+
+    </footer>
+
+    <script>
+        window.addEventListener('storage',()=>{
+            let storage = JSON.parse(localStorage.getItem('basket'))
+            
+            document.querySelectorAll('.btn.active').forEach(btn=>{
+                let id = btn.getAttribute('data-id')
+                if (!storage[id]) btn.classList.remove('active')
+            })
+        })
+    </script>
+</body>
+</html>
